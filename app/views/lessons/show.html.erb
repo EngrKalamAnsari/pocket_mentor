@@ -1,0 +1,42 @@
+<div class="container mt-5">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><%= @lesson.topic %></h2>
+    <%= link_to "Back", lessons_path, class: "btn btn-outline-secondary" %>
+  </div>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h5 class="text-muted mb-3">Level: <%= @lesson.level.capitalize %></h5>
+
+      <h4 class="fw-semibold mb-3">Lesson Content</h4>
+      <p style="white-space: pre-line;"><%= @lesson.content %></p>
+    </div>
+  </div>
+
+  <% if @lesson.metadata.present? %>
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h4 class="fw-semibold mb-3">Quiz</h4>
+
+        <% @lesson.metadata.each_with_index do |q, index| %>
+          <div class="mb-4">
+            <strong>Q<%= index + 1 %>:</strong> <%= q["question"] %>
+
+            <ul class="mt-2">
+              <% q["options"].each do |opt| %>
+                <li><%= opt %></li>
+              <% end %>
+            </ul>
+
+            <p class="text-success">
+              <strong>Answer:</strong> <%= q["answer"] %>
+            </p>
+          </div>
+        <% end %>
+
+      </div>
+    </div>
+  <% end %>
+
+</div>
