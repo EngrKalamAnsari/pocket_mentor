@@ -1,9 +1,9 @@
 FactoryBot.define do
   factory :lesson do
-    user { nil }
-    topic { "MyString" }
-    level { "MyString" }
-    content { "MyText" }
-    metadata { "" }
+    association :user
+    sequence(:topic) { |n| "Topic #{n}" }
+    level { 'beginner' }
+    content { 'This is a short lesson content used for tests.' }
+    metadata { { quiz: [] } }
   end
 end

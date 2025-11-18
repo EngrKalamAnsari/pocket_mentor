@@ -1,6 +1,6 @@
-require_relative "boot"
+require_relative 'boot'
 
-require "rails/all"
+require 'rails/all'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -23,5 +23,13 @@ module PocketMentor
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+    # Use Rack::Attack for rate limiting and blocking abusive clients
+    config.middleware.use Rack::Attack
+    # Set secure default headers
+    config.action_dispatch.default_headers.merge!({
+      'X-Frame-Options' => 'SAMEORIGIN',
+      'X-Content-Type-Options' => 'nosniff',
+      'Referrer-Policy' => 'strict-origin-when-cross-origin'
+    })
   end
 end

@@ -1,13 +1,31 @@
 class GroqClient
-  GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
+  GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions'.freeze
 
-  def initialize(api_key: ENV["GROQ_API_KEY"])
+  # Accepts an explicit API key and model, or falls back to ENV values.
+  def initialize(api_key: ENV.fetch('GROQ_API_KEY', nil), model: ENV.fetch('GROQ_MODEL', 'llama-3.1-8b-instant'))
     @api_key = api_key
+    @model = model
     @client = Faraday.new(url: GROQ_URL)
   end
 
   def generate_lesson(topic:, level:)
-    prompt = <<~PROMPT
+    return { 'error' => 'GROQ_API_KEY is not configured' } if @api_key.blank?
+
+    topic = sanitize_text(topic)
+    level = sanitize_level(level)
+
+    prompt = build_prompt(topic, level)
+    response = send_request(prompt)
+
+    parse_response(response)
+  rescue StandardError => e
+    { 'error' => e.message }
+  end
+
+  private
+
+  def build_prompt(topic, level)
+    <<~PROMPT
       Create a micro lesson on "#{topic}" for a #{level} learner.
 
       Respond in valid JSON only:
@@ -19,22 +37,52 @@ class GroqClient
         ]
       }
     PROMPT
+  end
 
-    response = @client.post do |req|
-      req.headers["Content-Type"] = "application/json"
-      req.headers["Authorization"] = "Bearer #{@api_key}"
+  # Basic input sanitization to reduce prompt-injection risk.
+  # Removes control chars, HTML tags, trims length, and collapses whitespace.
+  def sanitize_text(value)
+    return '' if value.nil?
+    s = value.to_s
+    # Remove control characters
+    s = s.gsub(/[\u0000-\u001f\u007f]/, '')
+    # Use Rails' sanitizer to strip dangerous HTML
+    if defined?(ActionView::Base)
+      s = ActionView::Base.full_sanitizer.sanitize(s)
+    else
+      s = s.gsub(/<[^>]*>/, '')
+    end
+    # Collapse whitespace and strip
+    s = s.gsub(/\s+/, ' ').strip
+    # Remove problematic quote/backtick characters
+    s = s.tr('"\'"`', '')
+    # Limit length
+    s[0, 200]
+  end
+
+  # Restrict level to a small set of allowed values, fallback to 'beginner'
+  def sanitize_level(value)
+    allowed = Lesson::Levels
+    v = value.to_s.downcase.strip
+    allowed.include?(v) ? v : 'beginner'
+  end
+
+  def send_request(prompt)
+    @client.post do |req|
+      req.headers['Content-Type'] = 'application/json'
+      req.headers['Authorization'] = "Bearer #{@api_key}"
 
       req.body = {
-        model: "llama-3.1-8b-instant",  # ✅ supported model
+        model: @model,
         messages: [
-          { role: "user", content: prompt }
+          { role: 'user', content: prompt }
         ],
         temperature: 0.7
       }.to_json
     end
+  end
 
+  def parse_response(response)
     JSON.parse(response.body)
-  rescue => e
-    { "error" => e.message }
   end
 end
