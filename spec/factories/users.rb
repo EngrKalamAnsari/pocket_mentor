@@ -1,8 +1,8 @@
 FactoryBot.define do
   factory :user do
     sequence(:email) { |n| "user#{n}@example.com" }
-    password { "password" }
-    password_confirmation { "password" }
+    password { 'password' }
+    password_confirmation { 'password' }
     # Devise tracking
     sign_in_count { 0 }
     current_sign_in_at { nil }

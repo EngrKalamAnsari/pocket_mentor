@@ -3,7 +3,10 @@ require 'ostruct'
 
 RSpec.describe LessonsController, type: :controller do
   let(:user) { create(:user) }
-  before { allow(controller).to receive(:authenticate_user!).and_return(true); allow(controller).to receive(:current_user).and_return(user) }
+  before do
+    allow(controller).to receive(:authenticate_user!).and_return(true)
+    allow(controller).to receive(:current_user).and_return(user)
+  end
 
   describe 'GET index' do
     it 'assigns lessons for current user ordered by created_at desc' do

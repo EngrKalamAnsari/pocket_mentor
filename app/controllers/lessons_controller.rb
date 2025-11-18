@@ -31,7 +31,7 @@ class LessonsController < ApplicationController
 
   def handle_create_error(_lesson, error)
     flash.now[:alert] = error.presence || 'Failed to save lesson.'
-    render :new, status: :unprocessable_entity
+    render :new, status: :unprocessable_content
   end
 
   def set_lesson
@@ -41,6 +41,6 @@ class LessonsController < ApplicationController
   end
 
   def lesson_params
-    params.require(:lesson).permit(:topic, :level)
+    params.expect(lesson: %i[topic level])
   end
 end

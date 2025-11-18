@@ -97,7 +97,7 @@ RSpec.describe GroqClient do
   context 'private helpers' do
     describe '#sanitize_text' do
       it 'strips html, control chars, quotes, collapses whitespace and truncates' do
-        raw = "<b>Hi</b>\u0000\u0001  \"quoted\" `tick` 'single' " + 'x' * 500
+        raw = "<b>Hi</b>\u0000\u0001  \"quoted\" `tick` 'single' #{'x' * 500}"
         out = client.send(:sanitize_text, raw)
         expect(out).not_to include('<', '>')
         expect(out).not_to include('"', "'", '`')

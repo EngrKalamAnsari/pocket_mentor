@@ -27,9 +27,9 @@ module PocketMentor
     config.middleware.use Rack::Attack
     # Set secure default headers
     config.action_dispatch.default_headers.merge!({
-      'X-Frame-Options' => 'SAMEORIGIN',
-      'X-Content-Type-Options' => 'nosniff',
-      'Referrer-Policy' => 'strict-origin-when-cross-origin'
-    })
+                                                    'X-Frame-Options' => 'SAMEORIGIN',
+                                                    'X-Content-Type-Options' => 'nosniff',
+                                                    'Referrer-Policy' => 'strict-origin-when-cross-origin'
+                                                  })
   end
 end

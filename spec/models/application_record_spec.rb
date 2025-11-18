@@ -7,6 +7,6 @@ RSpec.describe ApplicationRecord, type: :model do
 
   it 'can be subclassed for models' do
     klass = Class.new(ApplicationRecord)
-    expect(klass < ApplicationRecord).to be true
+    expect(klass).to be < ApplicationRecord
   end
 end

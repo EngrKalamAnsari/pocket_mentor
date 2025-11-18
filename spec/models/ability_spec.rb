@@ -31,10 +31,10 @@ RSpec.describe Ability do
       expect(ability.can?(:read, own_lesson)).to be true
     end
 
-    it "cannot read someone else's lesson" do
+    it 'cannot read someone else\'s lesson' do
       ability = Ability.new(persisted_user)
-      other_l = build(:lesson, user: other_user)
-      expect(ability.can?(:read, other_l)).to be false
+      other_lesson = build(:lesson, user: other_user)
+      expect(ability.can?(:read, other_lesson)).to be false
     end
   end
 end

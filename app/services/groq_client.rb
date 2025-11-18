@@ -43,15 +43,16 @@ class GroqClient
   # Removes control chars, HTML tags, trims length, and collapses whitespace.
   def sanitize_text(value)
     return '' if value.nil?
+
     s = value.to_s
     # Remove control characters
     s = s.gsub(/[\u0000-\u001f\u007f]/, '')
     # Use Rails' sanitizer to strip dangerous HTML
-    if defined?(ActionView::Base)
-      s = ActionView::Base.full_sanitizer.sanitize(s)
-    else
-      s = s.gsub(/<[^>]*>/, '')
-    end
+    s = if defined?(ActionView::Base)
+          ActionView::Base.full_sanitizer.sanitize(s)
+        else
+          s.gsub(/<[^>]*>/, '')
+        end
     # Collapse whitespace and strip
     s = s.gsub(/\s+/, ' ').strip
     # Remove problematic quote/backtick characters
@@ -62,7 +63,7 @@ class GroqClient
 
   # Restrict level to a small set of allowed values, fallback to 'beginner'
   def sanitize_level(value)
-    allowed = Lesson::Levels
+    allowed = Lesson::LEVELS
     v = value.to_s.downcase.strip
     allowed.include?(v) ? v : 'beginner'
   end

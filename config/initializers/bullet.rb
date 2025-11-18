@@ -1,4 +1,4 @@
-if Rails.env.development? || Rails.env.test?
+if Rails.env.local?
   require 'bullet'
   Bullet.enable = true
   Bullet.bullet_logger = true

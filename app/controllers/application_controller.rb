@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
   rescue_from ActionController::InvalidAuthenticityToken, with: :handle_invalid_auth_token
   rescue_from CanCan::AccessDenied, with: :handle_access_denied
   rescue_from ActiveRecord::RecordNotFound, with: :handle_record_not_found
-  rescue_from StandardError, with: :handle_standard_error unless Rails.env.development? || Rails.env.test?
+  rescue_from StandardError, with: :handle_standard_error unless Rails.env.local?
 
   def route_not_found
     redirect_to root_path, alert: 'The requested page was not found.'

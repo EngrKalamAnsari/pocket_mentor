@@ -7,12 +7,12 @@ class Ability
     user ||= User.new # guest user (not logged in)
 
     # Logged-in users can create lessons
-    if user.present? && user.persisted?
-      can :create, Lesson
+    return unless user.present? && user.persisted?
 
-      # Users can read their own lessons and manage them
-      can :read, Lesson, user_id: user.id
-    end
+    can :create, Lesson
+
+    # Users can read their own lessons and manage them
+    can :read, Lesson, user_id: user.id
 
     # Optionally restrict other resources similarly
   end

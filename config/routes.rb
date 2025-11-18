@@ -12,7 +12,7 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "posts#index"
   devise_for :users
-  resources :lessons, except: [:edit, :update, :destroy]
+  resources :lessons, except: %i[edit update destroy]
   root 'lessons#index'
 
   # Catch-all for unmatched routes — forwards to ApplicationController#route_not_found
